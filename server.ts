@@ -1,5 +1,5 @@
 const express = require('express');
-const bodyParser     =        require("body-parser");
+const bodyParser = require("body-parser");
 
 export class Server {
     app;
@@ -10,20 +10,19 @@ export class Server {
         this.port = port;
     }
 
-    async start(){
+    async start() {
         const port = this.port
-        // var express = require('express');
         this.app = express();
-        this.app.use(bodyParser.urlencoded({ extended: false }));
+        this.app.use(bodyParser.urlencoded({extended: false}));
         this.app.use(bodyParser.json());
-        //
+
         this.app.post('/login', function (req, res) {
 
             const email = req.body.email;
             const pwd = req.body.password;
 
             if (email.toLocaleString() === 'em@il.com'.toLocaleString()
-            && pwd === 'success') {
+                && pwd === 'success') {
                 res.status(201).send('Welcome');
             } else {
                 res.status(404).send('not found');
@@ -38,7 +37,6 @@ export class Server {
         this.httpServer = this.app.listen(port, function () {
             console.log(`Example server listening on port ${port}!`);
         });
-
 
 
     }

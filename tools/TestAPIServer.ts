@@ -16,9 +16,13 @@ type JsonData = {
 
 interface SimpleHttpClient {
     get(path: string, queryParams?: JsonData, optParams?: any): any
+
     post(path: string, jsonData?: JsonData, optParams?: any): any
+
     postString(path: string, stringData?: string, optParams?: any): any
+
     put(path: string, jsonData?: JsonData, optParams?: any): any
+
     delete(path: string, jsonData?: JsonData, optParams?: any): any
 }
 
@@ -42,14 +46,14 @@ export class TestAPIServer {
             const queryParamsCopy = {...queryParams};
 
             const filterStr = queryParamsCopy && queryParamsCopy.filter ? JSON.stringify(queryParamsCopy.filter) : undefined;
-            if(filterStr) queryParamsCopy.filter = filterStr;
+            if (filterStr) queryParamsCopy.filter = filterStr;
 
             const params = {
                 ...optParams,
                 method: 'GET',
-                url:    path,
-                qs:     queryParamsCopy,
-                json:   true
+                url: path,
+                qs: queryParamsCopy,
+                json: true
             };
 
             return this.request(params);
@@ -67,14 +71,14 @@ export class TestAPIServer {
             return this.request(params);
         };
 
-        ['post', 'put', 'delete'].forEach( method => {
+        ['post', 'put', 'delete'].forEach(method => {
             this.http[method] = (path, jsonData, optParams) => {
                 optParams = optParams || {};
                 const params = {
                     ...optParams,
                     method: method,
-                    url:    path,
-                    json:   jsonData
+                    url: path,
+                    json: jsonData
                 };
                 return this.request(params);
             }
@@ -82,7 +86,7 @@ export class TestAPIServer {
 
     }
 
-    async start(){
+    async start() {
         return await this.apiServer.start();
     }
 
@@ -92,11 +96,11 @@ export class TestAPIServer {
 
     /** request bounded to current server instance and returning promise */
     request(params) {
-        params = { ...params };
+        params = {...params};
         params.url = `http://localhost:${this.port}` + params.url;
         return new BPromise.Promise((resolve, reject) => {
             request(params, (err, response, body) => {
-                if(err) return reject(err);
+                if (err) return reject(err);
                 else {
                     response.body = body;
                     return resolve(response);
@@ -108,13 +112,13 @@ export class TestAPIServer {
 
     user(key: string): SimpleHttpClient {
         const holder = {} as SimpleHttpClient;
-        const headerMixin = { headers: { usid: key } };
+        const headerMixin = {headers: {usid: key}};
         holder.get = (path, queryParams, optParams = {}) => {
             const extraParams = deepmerge(headerMixin, optParams);
             return this.http.get(path, queryParams, extraParams);
         };
 
-        ['post', 'put', 'delete'].forEach( method => {
+        ['post', 'put', 'delete'].forEach(method => {
             holder[method] = (path, jsonData, optParams = {}) => {
                 const extraParams = deepmerge(headerMixin, optParams);
                 return this.http[method](path, jsonData, extraParams);
@@ -125,13 +129,13 @@ export class TestAPIServer {
 
     admin(key: string): SimpleHttpClient {
         const holder = {} as SimpleHttpClient;
-        const headerMixin = { headers: {asid: key}};
+        const headerMixin = {headers: {asid: key}};
         holder.get = (path, queryParams, optParams = {}) => {
             const extraParams = deepmerge(headerMixin, optParams);
             return this.http.get(path, queryParams, extraParams);
         };
 
-        ['post', 'put', 'delete'].forEach( method => {
+        ['post', 'put', 'delete'].forEach(method => {
             holder[method] = (path, jsonData, optParams = {}) => {
                 const extraParams = deepmerge(headerMixin, optParams);
                 return this.http[method](path, jsonData, extraParams);
