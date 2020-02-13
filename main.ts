@@ -1,6 +1,6 @@
 import {Server} from "./server";
 
 
-const server = new Server(3000);
+const server = new Server(4000);
 server.start()
-    .then(() => console.log("Server running"));
+	.then(() => console.log("Server running"));
